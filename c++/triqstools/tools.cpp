@@ -116,8 +116,7 @@ namespace triqstools {
     double beta         = iw_mesh.domain().beta;
 
     auto Lambda_reg = chi3_iw_t{chi3_tilde};
-    Lambda_reg[eta_][iw_, iW_] << -(chi3_tilde[eta_][iw_, iW_]
-                                    - 2.0 * beta * G_imp[iw_] * kronecker(iW_) * kronecker(eta_, 0) * n)
+    Lambda_reg[eta_][iw_, iW_] << -(chi3_tilde[eta_][iw_, iW_] - 2.0 * beta * G_imp[iw_] * kronecker(iW_) * kronecker(eta_, 0) * n)
              / (G_imp[iw_] * G_imp(iw_ + iW_) * (1. - U_Weiss[eta_][iW_] * chi2[eta_][iW_]))
           - l[eta_][iW_];
 
@@ -406,4 +405,47 @@ namespace triqstools {
 
     return hermitian;
   }
+
+  g_k_iw_t self_energy_weak_coupling(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_k_iw_t{G};
+    Sigma()    = 0.;
+
+    Sigma[k_, iw_] << -2. * coupling * coupling
+          * sum(sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh), iwp_ = iw_mesh),
+                kp_ = k_mesh)
+          / (beta * beta * k_mesh.size() * q_mesh.size());
+
+    return Sigma;
+  }
+
+  g_q_k_iw_t self_energy_weak_coupling_bosonic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_q_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
+    Sigma()    = 0.;
+
+    Sigma[q_, k_, iw_] << -2. * coupling * coupling
+          * sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), iW_ = iW_mesh), iwp_ = iw_mesh), kp_ = k_mesh)
+          / (beta * beta * k_mesh.size());
+
+    return Sigma;
+  }
+  g_k_k_iw_t self_energy_weak_coupling_fermionic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_q_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
+    Sigma()    = 0.;
+
+    Sigma[kp_, k_, iw_] << -2. * coupling * coupling
+                      * sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh), iwp_ = iw_mesh)
+                      / (beta * beta * q_mesh.size());
+
+    return Sigma;
+  }
+
 } // namespace triqstools

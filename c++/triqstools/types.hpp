@@ -22,6 +22,7 @@ namespace triqstools {
   using iW_mesh_t = iw_mesh_t;
 
   using k_mesh_t = gf_mesh<brillouin_zone>;
+  using q_mesh_t = k_mesh_t;
 
   using k_iw_mesh_t = gf_mesh<cartesian_product<brillouin_zone, imfreq>>;
   using q_iW_mesh_t = k_iw_mesh_t;
@@ -83,6 +84,12 @@ namespace triqstools {
   // Container type of single-particle fermionic theta-weighted propagator G(K,k,iw)
   using g_K_k_iw_t   = gf<cartesian_product<brillouin_zone, brillouin_zone, imfreq>, scalar_valued>;
   using g_K_k_iw_cvt = g_K_k_iw_t::const_view_type;
+
+  using g_q_k_iw_t   = g_K_k_iw_t;
+  using g_q_k_iw_cvt = g_q_k_iw_t::const_view_type;
+
+  using g_k_k_iw_t   = g_K_k_iw_t;
+  using g_k_k_iw_cvt = g_k_k_iw_t::const_view_type;
 
   // Container type of boson-electron vertex Lambda(K,Q,iw,iW)
   using g_K_Q_iw_iW_t   = gf<cartesian_product<brillouin_zone, brillouin_zone, imfreq, imfreq>, scalar_valued>;
@@ -164,4 +171,4 @@ namespace triqstools {
     triqs::clef::placeholder_prime<1> iWp_;
     triqs::clef::placeholder_prime<2> kp_;
   } // anonymous namespace
-} // namespace trilex
+} // namespace triqstools
