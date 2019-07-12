@@ -33,8 +33,8 @@ mu   = 0.
 
 n_iw = 4
 n_iW = 4
-n_k  = 10
-n_q  = 10
+n_k  = 8
+n_q  = 8
 
 
 # In[ ]:
@@ -103,14 +103,16 @@ Sigma_kp = tools.self_energy_weak_coupling_fermionic_momentum(G0, q_mesh, iw_mes
 # In[ ]:
 
 
+mpi.barrier()
 print_mpi("saving results")
-with HDFArchive('weak_coupling_fluct_diag.h5', 'a') as A:
-    A['beta']     = beta
-    A['n_k']      = n_k
-    A['k_mesh']   = k_mesh
-    A['n_q']      = n_q
-    A['q_mesh']   = q_mesh
-    A['Sigma']    = Sigma
-    A['Sigma_q']  = Sigma_q
-    A['Sigma_kp'] = Sigma_kp
+if mpi.is_master_node():
+    with HDFArchive('weak_coupling_fluct_diag.h5', 'a') as A:
+        A['beta']     = beta
+        A['n_k']      = n_k
+        A['k_mesh']   = k_mesh
+        A['n_q']      = n_q
+        A['q_mesh']   = q_mesh
+        A['Sigma']    = Sigma
+        A['Sigma_q']  = Sigma_q
+        A['Sigma_kp'] = Sigma_kp
 

@@ -413,11 +413,18 @@ namespace triqstools {
     auto Sigma = g_k_iw_t{G};
     Sigma()    = 0.;
 
-    Sigma[k_, iw_] << -2. * coupling * coupling
-          * sum(sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh), iwp_ = iw_mesh),
-                kp_ = k_mesh)
-          / (beta * beta * k_mesh.size() * q_mesh.size());
-
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto iw : iw_mesh) {
+          Sigma[k, iw] = -2. * coupling * coupling
+             * sum(sum(sum(sum(G(k + q_, iw + iW_) * G(kp_ + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh) * G[kp_, iwp_], iwp_ = iw_mesh),
+                   kp_ = k_mesh)
+             / (beta * beta * k_mesh.size() * q_mesh.size());
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
     return Sigma;
   }
 
@@ -428,12 +435,22 @@ namespace triqstools {
     auto Sigma = g_q_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
     Sigma()    = 0.;
 
-    Sigma[q_, k_, iw_] << -2. * coupling * coupling
-          * sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), iW_ = iW_mesh), iwp_ = iw_mesh), kp_ = k_mesh)
-          / (beta * beta * k_mesh.size());
-
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto iw : iw_mesh) {
+          for (auto q : q_mesh) {
+            Sigma[q, k, iw] = -2. * coupling * coupling
+               * sum(sum(sum(G(k + q, iw + iW_) * G(kp_ + q, iwp_ + iW_), iW_ = iW_mesh) * G[kp_, iwp_], kp_ = k_mesh), iwp_ = iw_mesh)
+               / (beta * beta * k_mesh.size());
+          }
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
     return Sigma;
   }
+
   g_k_k_iw_t self_energy_weak_coupling_fermionic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     const double beta             = iw_mesh.domain().beta;
@@ -441,10 +458,19 @@ namespace triqstools {
     auto Sigma = g_q_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
     Sigma()    = 0.;
 
-    Sigma[kp_, k_, iw_] << -2. * coupling * coupling
-                      * sum(sum(sum(G(k_ + q_, iw_ + iW_) * G[kp_, iwp_] * G(kp_ + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh), iwp_ = iw_mesh)
-                      / (beta * beta * q_mesh.size());
-
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto iw : iw_mesh) {
+          for (auto kp : k_mesh) {
+            Sigma[kp, k, iw] = -2. * coupling * coupling
+               * sum(sum(sum(G(k + q_, iw + iW_) * G(kp + q_, iwp_ + iW_), q_ = q_mesh), iW_ = iW_mesh) * G[kp, iwp_], iwp_ = iw_mesh)
+               / (beta * beta * q_mesh.size());
+          }
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
     return Sigma;
   }
 
