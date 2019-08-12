@@ -65,6 +65,10 @@ namespace triqstools {
   using g_k_iw_t   = gf<cartesian_product<brillouin_zone, imfreq>, scalar_valued>;
   using g_k_iw_cvt = g_k_iw_t::const_view_type;
 
+  // Container type of single-particle fermionic propagator G(k,iw)
+  using g_iW_k_iw_t   = gf<cartesian_product<imfreq,brillouin_zone, imfreq>, scalar_valued>;
+  using g_iW_k_iw_cvt = g_iW_k_iw_t::const_view_type;
+
   // Container type of single-particle fermionic propagator G(k,w)
   using g_k_w_t   = gf<cartesian_product<brillouin_zone, refreq>, scalar_valued>;
   using g_k_w_cvt = g_k_w_t::const_view_type;

@@ -457,7 +457,11 @@ module.add_function ("triqstools::chi2_q_iW_t triqstools::make_gf_hermitian (tri
 
 module.add_function ("bool triqstools::is_gf_hermitian (triqstools::g_k_iw_cvt G, double tolerance = 1E-8)", doc = r"""""")
 
+module.add_function ("triqstools::g_k_iw_t triqstools::make_bubble_from_G (triqstools::g_k_iw_t G)", doc = r"""""")
+
 module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_weak_coupling (triqstools::g_k_iw_cvt G, triqstools::q_mesh_t q_mesh, triqstools::iW_mesh_t iW_mesh, double coupling)", doc = r"""""")
+
+module.add_function ("triqstools::g_iW_k_iw_t triqstools::self_energy_weak_coupling_bosonic_frequency (triqstools::g_k_iw_cvt G, triqstools::q_mesh_t q_mesh, triqstools::iW_mesh_t iW_mesh, double coupling)", doc = r"""""")
 
 module.add_function ("triqstools::g_q_k_iw_t triqstools::self_energy_weak_coupling_bosonic_momentum (triqstools::g_k_iw_cvt G, triqstools::q_mesh_t q_mesh, triqstools::iW_mesh_t iW_mesh, double coupling)", doc = r"""""")
 

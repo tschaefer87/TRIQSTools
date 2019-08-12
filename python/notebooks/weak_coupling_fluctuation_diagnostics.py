@@ -24,7 +24,7 @@ from scipy import polyfit, polyval, polyder
 # In[ ]:
 
 
-beta = 4.
+beta = 2.
 mu   = 0.
 
 
@@ -33,8 +33,8 @@ mu   = 0.
 
 n_iw = 4
 n_iW = 4
-n_k  = 8
-n_q  = 8
+n_k  = 4
+n_q  = 4
 
 
 # In[ ]:
@@ -96,6 +96,13 @@ Sigma_q = tools.self_energy_weak_coupling_bosonic_momentum(G0, q_mesh, iw_mesh, 
 # In[ ]:
 
 
+print_mpi("calculating bosonic fluctuation diagnostics for frequency")
+Sigma_iW = tools.self_energy_weak_coupling_bosonic_frequency(G0, q_mesh, iW_mesh, 2.0)
+
+
+# In[ ]:
+
+
 print_mpi("calculating fermionic fluctuation diagnostics for momentum")
 Sigma_kp = tools.self_energy_weak_coupling_fermionic_momentum(G0, q_mesh, iw_mesh, 2.0)
 
@@ -115,4 +122,5 @@ if mpi.is_master_node():
         A['Sigma']    = Sigma
         A['Sigma_q']  = Sigma_q
         A['Sigma_kp'] = Sigma_kp
+        A['Sigma_iW'] = Sigma_iW
 

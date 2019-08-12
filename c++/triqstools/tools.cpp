@@ -451,11 +451,34 @@ namespace triqstools {
     return Sigma;
   }
 
+  g_iW_k_iw_t self_energy_weak_coupling_bosonic_frequency(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_iW_k_iw_t{{iW_mesh, k_mesh, iw_mesh}};
+    Sigma()    = 0.;
+
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto iw : iw_mesh) {
+          for (auto iW : iW_mesh) {
+            Sigma[iW, k, iw] = -2. * coupling * coupling
+               * sum(sum(sum(G(k + q_, iw + iW) * G(kp_ + q_, iwp_ + iW), q_ = q_mesh) * G[kp_, iwp_], kp_ = k_mesh), iwp_ = iw_mesh)
+               / (beta * q_mesh.size() * k_mesh.size());
+          }
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
+    return Sigma;
+  }
+
   g_k_k_iw_t self_energy_weak_coupling_fermionic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     const double beta             = iw_mesh.domain().beta;
 
-    auto Sigma = g_q_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
+    auto Sigma = g_k_k_iw_t{{q_mesh, k_mesh, iw_mesh}};
     Sigma()    = 0.;
 
     auto comm = mpi::communicator();
@@ -472,6 +495,21 @@ namespace triqstools {
     }
     Sigma = mpi::all_reduce(Sigma, comm);
     return Sigma;
+  }
+
+  g_k_iw_t make_bubble_from_G(g_k_iw_t G) {
+    auto G_r_tau = make_gf_from_fourier<0, 1>(G);
+
+    auto [r_mesh, tau_mesh] = G_r_tau.mesh();
+    double beta             = tau_mesh.domain().beta;
+
+    auto tau_mesh_bosonic = gf_mesh<imtime>{beta, Boson, tau_mesh.size()};
+
+    auto chi0 = g_r_tau_t{{r_mesh, tau_mesh_bosonic}};
+
+    chi0[r_, tau_] << -2. * G_r_tau(-r_, beta - tau_) * G_r_tau(r_, tau_);
+
+    return make_gf_from_fourier<0, 1>(chi0);
   }
 
 } // namespace triqstools

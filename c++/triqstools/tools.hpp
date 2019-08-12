@@ -325,7 +325,11 @@ namespace triqstools {
 
   bool is_gf_hermitian(g_k_iw_cvt G, double tolerance = 1E-8);
 
+  g_k_iw_t make_bubble_from_G(g_k_iw_t G);
+
   g_k_iw_t self_energy_weak_coupling(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
+
+  g_iW_k_iw_t self_energy_weak_coupling_bosonic_frequency(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
 
   g_q_k_iw_t self_energy_weak_coupling_bosonic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
 
