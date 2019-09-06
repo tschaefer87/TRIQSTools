@@ -10,6 +10,8 @@
 #include "./tools.hpp"
 
 namespace triqstools {
+  using std::pow;
+  using std::sin;
   using triqs::utility::enumerate;
   using triqs::utility::product;
   using triqs::utility::zip;
@@ -406,6 +408,50 @@ namespace triqstools {
     return hermitian;
   }
 
+  g_k_iw_t self_energy_ornstein_zernike(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    auto const &[q_mesh, iW_mesh] = q_iW_mesh;
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_k_iw_t{G};
+    Sigma()    = 0.;
+
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto const &iw : iw_mesh) {
+          for (auto const &[q, iW] : q_iW_mesh) {
+            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + iW + pow(xi, -2));
+          }
+          Sigma[k, iw] /= (beta * q_mesh.size());
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
+    return Sigma;
+  }
+
+  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    auto const &[q_mesh, iW_mesh] = chi.mesh();
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_k_iw_t{G};
+    Sigma()    = 0.;
+
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto iw : iw_mesh) {
+          Sigma[k, iw] =
+             -2. * coupling * coupling * sum(sum(G(k + q_, iw + iW_) * chi(q_, iW_), q_ = q_mesh), iW_ = iW_mesh) / (beta * q_mesh.size());
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
+    return Sigma;
+  }
+
   g_k_iw_t self_energy_weak_coupling(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     const double beta             = iw_mesh.domain().beta;
@@ -507,7 +553,7 @@ namespace triqstools {
 
     auto chi0 = g_r_tau_t{{r_mesh, tau_mesh_bosonic}};
 
-    chi0[r_, tau_] << -2. * G_r_tau(-r_, beta - tau_) * G_r_tau(r_, tau_);
+    chi0[r_, tau_] << -G_r_tau(-r_, beta - tau_) * G_r_tau(r_, tau_);
 
     return make_gf_from_fourier<0, 1>(chi0);
   }
