@@ -421,7 +421,7 @@ namespace triqstools {
       if (k.linear_index() % comm.size() == comm.rank()) {
         for (auto const &iw : iw_mesh) {
           for (auto const &[q, iW] : q_iW_mesh) {
-            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + iW + pow(xi, -2));
+            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + std::sqrt(iW * iW) + pow(xi, -2));
           }
           Sigma[k, iw] /= (beta * q_mesh.size());
         }
