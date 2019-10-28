@@ -421,7 +421,7 @@ namespace triqstools {
       if (k.linear_index() % comm.size() == comm.rank()) {
         for (auto const &iw : iw_mesh) {
           for (auto const &[q, iW] : q_iW_mesh) {
-            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + std::sqrt(iW * iW) + pow(xi, -2));
+            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + std::abs(std::sqrt(iW * iW)) + pow(xi, -2));
           }
           Sigma[k, iw] /= (beta * q_mesh.size());
         }
@@ -431,6 +431,28 @@ namespace triqstools {
     return Sigma;
   }
 
+  g_k_iw_t self_energy_ornstein_zernike_iW(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy) {
+    auto const &[k_mesh, iw_mesh] = G.mesh();
+    auto const &[q_mesh, iW_mesh] = q_iW_mesh;
+    const double beta             = iw_mesh.domain().beta;
+
+    auto Sigma = g_k_iw_t{G};
+    Sigma()    = 0.;
+
+    auto comm = mpi::communicator();
+    for (auto k : k_mesh) {
+      if (k.linear_index() % comm.size() == comm.rank()) {
+        for (auto const &iw : iw_mesh) {
+          for (auto const &[q, iW] : q_iW_mesh) {
+            Sigma[k, iw] += G(k + q, iw) * a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + iW + pow(xi, -2));
+          }
+          Sigma[k, iw] /= (beta * q_mesh.size());
+        }
+      }
+    }
+    Sigma = mpi::all_reduce(Sigma, comm);
+    return Sigma;
+  }
   g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     auto const &[q_mesh, iW_mesh] = chi.mesh();
@@ -556,6 +578,28 @@ namespace triqstools {
     chi0[r_, tau_] << -G_r_tau(-r_, beta - tau_) * G_r_tau(r_, tau_);
 
     return make_gf_from_fourier<0, 1>(chi0);
+  }
+
+  g_k_iw_t bubble2(g_k_iw_cvt chi, g_k_iw_cvt g0) {
+
+    // Fourier Transformation of k, \omega to obtain g(r,t)
+    auto chirt = make_gf_from_fourier<0,1>(chi);
+    auto g0rt = make_gf_from_fourier<0,1>(g0);
+
+    auto sigma = g0rt;
+    sigma() = 0;
+
+    // The mesh of gtr is a cartesian product mt x mr. We decompose it.
+    auto [mr, mt] = g0rt.mesh();
+
+    // we fill sigma : sigma(r, tau) = chi(r, tau) * g0(r, tau)
+    // I am not sure this is correct .......
+    for (auto const &r : mr)
+      for (auto const &t : mt)
+        sigma[r, t] = chirt(r,t) * g0rt(r,t);
+
+    // Fourier transform back to k, \omega space and return
+    return make_gf_from_fourier<0,1>(sigma);
   }
 
 } // namespace triqstools

@@ -329,7 +329,11 @@ namespace triqstools {
 
   g_k_iw_t self_energy_ornstein_zernike(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
 
+  g_k_iw_t self_energy_ornstein_zernike_iW(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
+
   g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling);
+
+  g_k_iw_t bubble2(g_k_iw_cvt chi, g_k_iw_cvt g0);
 
   g_k_iw_t self_energy_weak_coupling(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
 

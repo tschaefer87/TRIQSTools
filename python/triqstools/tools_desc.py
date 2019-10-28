@@ -461,7 +461,11 @@ module.add_function ("triqstools::g_k_iw_t triqstools::make_bubble_from_G (triqs
 
 module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_ornstein_zernike (triqstools::g_k_iw_cvt G, triqstools::q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy)", doc = r"""""")
 
+module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_ornstein_zernike_iW (triqstools::g_k_iw_cvt G, triqstools::q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy)", doc = r"""""")
+
 module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_chi (triqstools::g_k_iw_cvt G, triqstools::g_q_iW_cvt chi, double coupling)", doc = r"""""")
+
+module.add_function ("triqstools::g_k_iw_t triqstools::bubble2 (triqstools::g_k_iw_cvt chi, triqstools::g_k_iw_cvt g0)", doc = r"""""")
 
 module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_weak_coupling (triqstools::g_k_iw_cvt G, triqstools::q_mesh_t q_mesh, triqstools::iW_mesh_t iW_mesh, double coupling)", doc = r"""""")
 
