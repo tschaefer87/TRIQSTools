@@ -83,7 +83,7 @@ out
 
 module.add_function ("triqstools::chi2_q_iW_t triqstools::dyson_k_iw (triqstools::g_k_iw_cvt G0, triqstools::chi2_iW_cvt Sigma, double mu = 0.)", doc = r"""""")
 
-module.add_function ("triqstools::chi2_q_iW_t triqstools::dyson_q_iW (array<double,1> U, triqstools::chi2_q_iW_cvt P)", doc = r"""Dyson equation for a one-particle lattice block Green function
+module.add_function ("triqstools::chi2_q_iW_t triqstools::dyson_q_iW (array<double, 1> U, triqstools::chi2_q_iW_cvt P)", doc = r"""Dyson equation for a one-particle lattice block Green function
 
  :math:`W^{\eta}({\mathbf q},i\Omega)=\frac{U^{\eta}}{1-U^{\eta}P^{\eta}({\mathbf q},i\Omega)}`
 
@@ -102,7 +102,7 @@ out
 
 module.add_function ("triqstools::chi2_q_iW_t triqstools::dyson_q_iW (triqstools::chi2_q_cvt U, triqstools::chi2_q_iW_cvt P)", doc = r"""""")
 
-module.add_function ("triqstools::chi2_iW_t triqstools::dyson_iW (array<double,1> U, triqstools::chi2_iW_cvt P)", doc = r"""local Dyson equation for a one-particle lattice block Green function
+module.add_function ("triqstools::chi2_iW_t triqstools::dyson_iW (array<double, 1> U, triqstools::chi2_iW_cvt P)", doc = r"""local Dyson equation for a one-particle lattice block Green function
 
  :math:`W^{\eta}(i\Omega)=\frac{U^{\eta}}{1-U^{\eta}P^{\eta}(i\Omega)}`
 
@@ -295,15 +295,19 @@ Returns
 out
      regular part of the electron-boson coupling vertex :math:`Lambda^{\eta}_{reg}(\mathbf{K},\mathbf{Q},i\omega,i\Omega)`""")
 
-module.add_function ("triqstools::chi2_q_iW_t triqstools::make_chi_lambda (triqstools::chi2_q_iW_cvt chi, array<double,1> lambda)", doc = r"""""")
+module.add_function ("triqstools::chi2_q_iW_t triqstools::make_chi_lambda (triqstools::chi2_q_iW_cvt chi, array<double, 1> lambda)", doc = r"""""")
 
-module.add_function ("triqstools::chi2_q_iW_t triqstools::make_chi_from_W (array<double,1> U, triqstools::chi2_q_iW_cvt W)", doc = r"""""")
+module.add_function ("triqstools::chi2_q_iW_t triqstools::make_chi_from_W (array<double, 1> U, triqstools::chi2_q_iW_cvt W)", doc = r"""""")
 
 module.add_function ("triqstools::chi2_q_iW_t triqstools::make_chi_from_W (triqstools::chi2_q_cvt U, triqstools::chi2_q_iW_cvt W)", doc = r"""""")
 
-module.add_function ("triqstools::chi2_q_iW_t triqstools::make_P_from_W (array<double,1> U, triqstools::chi2_q_iW_cvt W)", doc = r"""""")
+module.add_function ("triqstools::chi2_q_iW_t triqstools::make_P_from_W (array<double, 1> U, triqstools::chi2_q_iW_cvt W)", doc = r"""""")
 
-module.add_function ("triqstools::chi2_q_iW_t triqstools::make_W_from_chi (array<double,1> U, triqstools::chi2_q_iW_cvt chi)", doc = r"""""")
+module.add_function ("triqstools::chi2_q_iW_t triqstools::make_W_from_chi (array<double, 1> U, triqstools::chi2_q_iW_cvt chi)", doc = r"""""")
+
+module.add_function ("triqstools::g_iW_iw_iw_t triqstools::make_F_updn_from_chi_updn (triqstools::g_iW_iw_iw_cvt chi_updn, triqstools::g_iw_cvt G)", doc = r"""""")
+
+module.add_function ("triqstools::g_q_iW_t triqstools::make_chi_ornstein_zernike (triqstools::q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double z, double Qx, double Qy)", doc = r"""""")
 
 module.add_function ("std::complex<double> triqstools::density (triqstools::g_k_iw_cvt G)", doc = r"""calculates the density for a given lattice Green function
 
@@ -463,7 +467,9 @@ module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_ornstein_zern
 
 module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_ornstein_zernike_iW (triqstools::g_k_iw_cvt G, triqstools::q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy)", doc = r"""""")
 
-module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_chi (triqstools::g_k_iw_cvt G, triqstools::g_q_iW_cvt chi, double coupling)", doc = r"""""")
+module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_chi (triqstools::g_k_iw_cvt G, triqstools::g_q_iW_cvt chi, triqstools::k_iw_mesh_t k_iw_mesh, double coupling)", doc = r"""""")
+
+module.add_function ("triqstools::g_k_iw_t triqstools::self_energy_chi_restricted (triqstools::g_k_iw_cvt G, triqstools::g_q_iW_cvt chi, triqstools::k_iw_mesh_t k_iw_mesh, double coupling, double xi)", doc = r"""""")
 
 module.add_function ("triqstools::g_k_iw_t triqstools::bubble2 (triqstools::g_k_iw_cvt chi, triqstools::g_k_iw_cvt g0)", doc = r"""""")
 

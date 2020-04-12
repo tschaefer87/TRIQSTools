@@ -189,6 +189,28 @@ namespace triqstools {
     return chi;
   }
 
+  g_iW_iw_iw_t make_F_updn_from_chi_updn(g_iW_iw_iw_cvt chi_updn, g_iw_cvt G) {
+    auto const &iW_iw_iwp_mesh = chi_updn.mesh();
+
+    auto F_updn = g_iW_iw_iw_t{chi_updn};
+    F_updn()    = 0.;
+
+    for (auto const &[iW, iw, iwp] : iW_iw_iwp_mesh) { F_updn[iW, iw, iwp] = -chi_updn[iW, iw, iwp] / (G(iw + iW) * G(iw) * G(iwp + iW) * G(iwp)); }
+
+    return F_updn;
+  }
+
+  g_iW_iw_iw_mat_t make_chi_from_G2c(g_iW_iw_iw_mat_cvt G2c, g_iw_mat_cvt G) {
+    double beta = G.domain().beta;
+
+    auto chi = g_iW_iw_iw_mat_t{G2c};
+
+    // Calculate generalized susceptibility in the ph channel from G2c and G
+    //chi[iW_, iw_, iwp_][i_, j_, k_, l_] << G2c[iW_, iw_, iwp_][i_, j_, k_, l_] - beta * kronecker(iw_, iwp_) * G[iw_][l_, i_] * G(iwp_ + iW_)[j_, k_];
+
+    return chi;
+  }
+
   std::complex<double> sum_k(g_k_cvt G) {
     std::complex<double> summed = 0.;
 
@@ -408,13 +430,27 @@ namespace triqstools {
     return hermitian;
   }
 
-  g_q_iW_t make_chi_ornstein_zernike(q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double Qx, double Qy) {
+  g_q_iW_t make_chi_ornstein_zernike(q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double z, double Qx, double Qy) {
     auto chi = g_q_iW_t{q_iW_mesh};
 
     for (auto const &[q, iW] : q_iW_mesh) {
-      chi[q, iW] = a / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + std::abs(std::sqrt(iW * iW)) / gamma + pow(xi, -2));
+      chi[q, iW] = a
+         / (4. * pow(sin((q[0] - Qx) / 2.), 2) + 4. * pow(sin((q[1] - Qy) / 2.), 2) + pow(std::abs(std::sqrt(iW * iW)), 2. / z) / gamma
+            + pow(xi, -2));
     }
     return chi;
+  }
+
+  g_iw_t self_energy_from_dyson_schwinger(g_iW_iw_iw_cvt F_updn, g_iw_cvt G, double U) {
+    auto const &iW_iw_iwp_mesh = F_updn.mesh();
+    const double beta          = std::get<0>(iW_iw_iwp_mesh).domain().beta;
+
+    auto Sigma = g_iw_t{G};
+    Sigma()    = 0.;
+
+    for (auto const &[iW, iw, iwp] : iW_iw_iwp_mesh) { Sigma[iw] += F_updn[iW, iw, iwp] * G(iwp) * G(iwp + iW) * G(iw + iW); }
+
+    return -Sigma * U / (beta * beta);
   }
 
   g_k_iw_t self_energy_ornstein_zernike(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy) {

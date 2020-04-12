@@ -216,126 +216,128 @@ namespace triqstools {
 
   chi2_q_iW_t make_W_from_chi(array<double, 1> U, chi2_q_iW_cvt chi);
 
-  g_q_iW_t make_chi_ornstein_zernike(q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double Qx, double Qy);
-  /**
-   * calculates the density for a given lattice Green function
-   *
-   * @param G Green function :math:`G(\mathbf{k},i\omega)` for which the density is determined. The necessary tail will automatically be determined.
-   * @return density, half-filling corresponds to 0.5
-   * @remark
-   */
-  std::complex<double> density(g_k_iw_cvt G);
+  g_iW_iw_iw_t make_F_updn_from_chi_updn(g_iW_iw_iw_cvt chi_updn, g_iw_cvt G);
 
-  std::complex<double> density(g_iw_cvt G);
-  /**
-   * (normalized) sum over both, the Brillouin zone and Matsubara mesh of a given lattice Green function.
-   * Be careful: no tail is used.
-   *
-   * @param G Green function :math:`G(\mathbf{k},i\omega)`.
-   * @return (normalized) sum over both meshes without tail
-   * @remark
-   */
-  std::complex<double> sum_k_iw(g_k_iw_cvt G);
+  g_q_iW_t make_chi_ornstein_zernike(q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double z, double Qx, double Qy);
+/**
+* calculates the density for a given lattice Green function
+*
+* @param G Green function :math:`G(\mathbf{k},i\omega)` for which the density is determined. The necessary tail will automatically be determined.
+* @return density, half-filling corresponds to 0.5
+* @remark
+*/
+std::complex<double> density(g_k_iw_cvt G);
 
-  /**
-   * calculates the density for a given lattice Green function including a shift in the chemical potential
-   *
-   * @param G Green function :math:`G(\mathbf{k},i\omega)` for which the density is determined. The necessary tail will automatically be determined.
-   * @param mu_diff additional shift in the chemical potential
-   * @return density, half-filling corresponds to 0.5
-   * @remark
-   */
-  std::complex<double> calc_filling(g_k_iw_cvt G, double mu_diff);
+std::complex<double> density(g_iw_cvt G);
+/**
+* (normalized) sum over both, the Brillouin zone and Matsubara mesh of a given lattice Green function.
+* Be careful: no tail is used.
+*
+* @param G Green function :math:`G(\mathbf{k},i\omega)`.
+* @return (normalized) sum over both meshes without tail
+* @remark
+*/
+std::complex<double> sum_k_iw(g_k_iw_cvt G);
 
-  /**
-   * copies Green function into a Gf of smaller mesh size
-   *
-   * @param G_big Green function :math:`G(\mathbf{k},i\omega)` to be copied
-   * @param G_small Green function, which structure serves as a template
-   * @return Green function with data from G_big, but structure of G_small
-   * @remark
-   */
-  g_k_iw_t copy_gf_to_smaller_intervall(g_k_iw_cvt G_big, g_k_iw_cvt G_small);
+/**
+* calculates the density for a given lattice Green function including a shift in the chemical potential
+*
+* @param G Green function :math:`G(\mathbf{k},i\omega)` for which the density is determined. The necessary tail will automatically be determined.
+* @param mu_diff additional shift in the chemical potential
+* @return density, half-filling corresponds to 0.5
+* @remark
+*/
+std::complex<double> calc_filling(g_k_iw_cvt G, double mu_diff);
 
-  /**
-   * copies Green function into a Gf of smaller mesh size
-   *
-   * @param G_big Green function :math:`G(\mathbf{r},i\omega)` to be copied
-   * @param G_small Green function, which structure serves as a template
-   * @return Green function with data from G_big, but structure of G_small
-   * @remark
-   */
-  g_r_iw_t copy_gf_to_smaller_intervall(g_r_iw_cvt G_big, g_r_iw_cvt G_small);
+/**
+* copies Green function into a Gf of smaller mesh size
+*
+* @param G_big Green function :math:`G(\mathbf{k},i\omega)` to be copied
+* @param G_small Green function, which structure serves as a template
+* @return Green function with data from G_big, but structure of G_small
+* @remark
+*/
+g_k_iw_t copy_gf_to_smaller_intervall(g_k_iw_cvt G_big, g_k_iw_cvt G_small);
 
-  /**
-   * copies Green function into a Gf of smaller mesh size
-   *
-   * @param G_big Green function :math:`G(\mathbf{r},\tau)` to be copied
-   * @param G_small Green function, which structure serves as a template
-   * @return Green function with data from G_big, but structure of G_small
-   * @remark
-   */
-  g_r_tau_t copy_gf_to_smaller_intervall(g_r_tau_cvt G_big, g_r_tau_cvt G_small);
+/**
+* copies Green function into a Gf of smaller mesh size
+*
+* @param G_big Green function :math:`G(\mathbf{r},i\omega)` to be copied
+* @param G_small Green function, which structure serves as a template
+* @return Green function with data from G_big, but structure of G_small
+* @remark
+*/
+g_r_iw_t copy_gf_to_smaller_intervall(g_r_iw_cvt G_big, g_r_iw_cvt G_small);
 
-  /**
-  * copies Green function into a Gf of smaller mesh size
-  *
-  * @param G_big Green function :math:`G(i\omega,i\Omega)` to be copied
-  * @param G_small Green function, which structure serves as a template
-  * @return Green function with data from G_big, but structure of G_small
-  * @remark
-  */
-  g_iw_iW_t copy_gf_to_smaller_intervall(g_iw_iW_cvt G_big, g_iw_iW_cvt G_small);
+/**
+* copies Green function into a Gf of smaller mesh size
+*
+* @param G_big Green function :math:`G(\mathbf{r},\tau)` to be copied
+* @param G_small Green function, which structure serves as a template
+* @return Green function with data from G_big, but structure of G_small
+* @remark
+*/
+g_r_tau_t copy_gf_to_smaller_intervall(g_r_tau_cvt G_big, g_r_tau_cvt G_small);
 
-  /**
-  * copies Green function into a Gf of smaller mesh size
-  *
-  * @param G_big Green function :math:`G(i\omega)` to be copied
-  * @param G_small Green function, which structure serves as a template
-  * @return Green function with data from G_big, but structure of G_small
-  * @remark
-  */
-  g_iw_t copy_gf_to_smaller_intervall(g_iw_cvt G_big, g_iw_cvt G_small);
+/**
+* copies Green function into a Gf of smaller mesh size
+*
+* @param G_big Green function :math:`G(i\omega,i\Omega)` to be copied
+* @param G_small Green function, which structure serves as a template
+* @return Green function with data from G_big, but structure of G_small
+* @remark
+*/
+g_iw_iW_t copy_gf_to_smaller_intervall(g_iw_iW_cvt G_big, g_iw_iW_cvt G_small);
 
-  /**
-  * copies block Green function into a Gf of smaller mesh size
-  *
-  * @param W_big Green function :math:`W^{\eta}(\mathbf{q},i\Omega)` to be copied
-  * @param W_small Green function, which structure serves as a template
-  * @return Green function with data from W_big, but structure of W_small
-  * @remark
-  */
-  chi2_q_iW_t copy_gf_to_smaller_intervall(chi2_q_iW_cvt W_big, chi2_q_iW_cvt W_small);
+/**
+* copies Green function into a Gf of smaller mesh size
+*
+* @param G_big Green function :math:`G(i\omega)` to be copied
+* @param G_small Green function, which structure serves as a template
+* @return Green function with data from G_big, but structure of G_small
+* @remark
+*/
+g_iw_t copy_gf_to_smaller_intervall(g_iw_cvt G_big, g_iw_cvt G_small);
 
-  g_iw_t evaluate_gf_on_mesh_same_beta(g_iw_cvt gf, iw_mesh_t mesh);
+/**
+* copies block Green function into a Gf of smaller mesh size
+*
+* @param W_big Green function :math:`W^{\eta}(\mathbf{q},i\Omega)` to be copied
+* @param W_small Green function, which structure serves as a template
+* @return Green function with data from W_big, but structure of W_small
+* @remark
+*/
+chi2_q_iW_t copy_gf_to_smaller_intervall(chi2_q_iW_cvt W_big, chi2_q_iW_cvt W_small);
 
-  g_iw_t evaluate_gf_on_mesh(g_iw_cvt gf, iw_mesh_t mesh);
+g_iw_t evaluate_gf_on_mesh_same_beta(g_iw_cvt gf, iw_mesh_t mesh);
 
-  g_k_iw_t evaluate_gf_on_mesh(g_k_iw_cvt gf, k_iw_mesh_t mesh);
+g_iw_t evaluate_gf_on_mesh(g_iw_cvt gf, iw_mesh_t mesh);
 
-  g_r_iw_t evaluate_gf_on_mesh(g_r_iw_cvt gf, r_iw_mesh_t mesh);
+g_k_iw_t evaluate_gf_on_mesh(g_k_iw_cvt gf, k_iw_mesh_t mesh);
 
-  g_iw_iW_t evaluate_gf_on_mesh(g_iw_iW_cvt gf, iw_iW_mesh_t mesh);
+g_r_iw_t evaluate_gf_on_mesh(g_r_iw_cvt gf, r_iw_mesh_t mesh);
 
-  g_iw_t make_gf_hermitian(g_iw_cvt G);
+g_iw_iW_t evaluate_gf_on_mesh(g_iw_iW_cvt gf, iw_iW_mesh_t mesh);
 
-  chi2_iW_t make_gf_hermitian(chi2_iW_cvt W);
+g_iw_t make_gf_hermitian(g_iw_cvt G);
 
-  g_k_iw_t make_gf_hermitian(g_k_iw_cvt G);
+chi2_iW_t make_gf_hermitian(chi2_iW_cvt W);
 
-  chi2_q_iW_t make_gf_hermitian(chi2_q_iW_cvt W);
+g_k_iw_t make_gf_hermitian(g_k_iw_cvt G);
 
-  bool is_gf_hermitian(g_k_iw_cvt G, double tolerance = 1E-8);
+chi2_q_iW_t make_gf_hermitian(chi2_q_iW_cvt W);
 
-  g_k_iw_t make_bubble_from_G(g_k_iw_t G);
+bool is_gf_hermitian(g_k_iw_cvt G, double tolerance = 1E-8);
 
-  g_k_iw_t self_energy_ornstein_zernike(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
+g_k_iw_t make_bubble_from_G(g_k_iw_t G);
 
-  g_k_iw_t self_energy_ornstein_zernike_iW(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
+g_k_iw_t self_energy_ornstein_zernike(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
 
-  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling);
+g_k_iw_t self_energy_ornstein_zernike_iW(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
 
-  g_k_iw_t self_energy_chi_restricted(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling, double xi);
+g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling);
+  
+g_k_iw_t self_energy_chi_restricted(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling, double xi);
 
   g_k_iw_t bubble2(g_k_iw_cvt chi, g_k_iw_cvt g0);
 

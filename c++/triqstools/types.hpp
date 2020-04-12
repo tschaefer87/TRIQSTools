@@ -45,6 +45,10 @@ namespace triqstools {
   using g_iw_t   = gf<imfreq, scalar_valued>;
   using g_iw_cvt = g_iw_t::const_view_type;
 
+  // Container type of local single-particle fermionic propagator G(iw)
+  using g_iw_mat_t   = gf<imfreq, matrix_valued>;
+  using g_iw_mat_cvt = g_iw_mat_t::const_view_type;
+
   // Container type of local single-particle fermionic propagator G(w)
   using g_w_t   = gf<refreq, scalar_valued>;
   using g_w_cvt = g_w_t::const_view_type;
@@ -61,12 +65,20 @@ namespace triqstools {
   using g_iw_iW_t   = gf<cartesian_product<imfreq, imfreq>, scalar_valued>;
   using g_iw_iW_cvt = g_iw_iW_t::const_view_type;
 
+  // Container type of local fermion-fermion vertex F(iW, iw, iw)
+  using g_iW_iw_iw_t   = gf<cartesian_product<imfreq, imfreq, imfreq>, scalar_valued>;
+  using g_iW_iw_iw_cvt = g_iW_iw_iw_t::const_view_type;
+
+  // Container type of local fermion-fermion vertex (iW, iw, iw)
+  using g_iW_iw_iw_mat_t   = gf<cartesian_product<imfreq, imfreq, imfreq>, matrix_valued>;
+  using g_iW_iw_iw_mat_cvt = g_iW_iw_iw_mat_t::const_view_type;
+
   // Container type of single-particle fermionic propagator G(k,iw)
   using g_k_iw_t   = gf<cartesian_product<brillouin_zone, imfreq>, scalar_valued>;
   using g_k_iw_cvt = g_k_iw_t::const_view_type;
 
   // Container type of single-particle fermionic propagator G(k,iw)
-  using g_iW_k_iw_t   = gf<cartesian_product<imfreq,brillouin_zone, imfreq>, scalar_valued>;
+  using g_iW_k_iw_t   = gf<cartesian_product<imfreq, brillouin_zone, imfreq>, scalar_valued>;
   using g_iW_k_iw_cvt = g_iW_k_iw_t::const_view_type;
 
   // Container type of single-particle fermionic propagator G(k,w)
@@ -171,6 +183,9 @@ namespace triqstools {
     triqs::clef::placeholder<6> tau_;
     triqs::clef::placeholder<7> K_;
     triqs::clef::placeholder<8> Q_;
+    triqs::clef::placeholder<9> i_;
+    triqs::clef::placeholder<10> j_;
+    triqs::clef::placeholder<11> l_;
     triqs::clef::placeholder_prime<0> iwp_;
     triqs::clef::placeholder_prime<1> iWp_;
     triqs::clef::placeholder_prime<2> kp_;
