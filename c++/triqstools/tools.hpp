@@ -215,6 +215,8 @@ namespace triqstools {
   chi2_q_iW_t make_P_from_W(array<double, 1> U, chi2_q_iW_cvt W);
 
   chi2_q_iW_t make_W_from_chi(array<double, 1> U, chi2_q_iW_cvt chi);
+
+  g_q_iW_t make_chi_ornstein_zernike(q_iW_mesh_t q_iW_mesh, double a, double xi, double gamma, double Qx, double Qy);
   /**
    * calculates the density for a given lattice Green function
    *
@@ -331,7 +333,9 @@ namespace triqstools {
 
   g_k_iw_t self_energy_ornstein_zernike_iW(g_k_iw_cvt G, q_iW_mesh_t q_iW_mesh, double a, double xi, double Qx, double Qy);
 
-  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling);
+  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling);
+
+  g_k_iw_t self_energy_chi_restricted(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling, double xi);
 
   g_k_iw_t bubble2(g_k_iw_cvt chi, g_k_iw_cvt g0);
 
