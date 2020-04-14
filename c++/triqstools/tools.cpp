@@ -534,7 +534,7 @@ namespace triqstools {
         for (auto iw : iw_mesh) {
           for (auto q : q_mesh) {
             if (std::abs(q[0] - pi) < 2. / std::abs(xi) && std::abs(q[1] - pi) < 2. / std::abs(xi)) {
-              Sigma[k, iw] = coupling * coupling * sum(G(k + q, iw + iW_) * chi(q, iW_), iW_ = iW_mesh) / (beta * q_mesh.size());
+              Sigma[k, iw] += coupling * coupling * sum(G(k + q, iw + iW_) * chi(q, iW_), iW_ = iW_mesh) / (beta * q_mesh.size());
             }
           }
         }
