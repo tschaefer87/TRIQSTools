@@ -511,7 +511,9 @@ namespace triqstools {
     for (auto k : k_mesh) {
       if (k.linear_index() % comm.size() == comm.rank()) {
         for (auto iw : iw_mesh) {
-          Sigma[k, iw] = coupling * coupling * sum(sum(G(k + q_, iw + iW_) * chi(q_, iW_), q_ = q_mesh), iW_ = iW_mesh) / (beta * q_mesh.size());
+           for (auto [q, iW] : chi.mesh()) {
+             Sigma[k, iw] += coupling * coupling * G(k + q, iw + iW) * chi(q, iW) / (beta * q_mesh.size());
+           }
         }
       }
     }
