@@ -521,24 +521,24 @@ namespace triqstools {
     return Sigma;
   }
 
-  g_k_iw_t self_energy_chi_FT((g_k_iw_cvt G, g_q_iW_cvt chi, double coupling) {
+  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     auto const &[q_mesh, iW_mesh] = chi.mesh();
     
+    const int n_iw                = iw_mesh.size() / 2;
+    const int n_iW                = iW_mesh.size() / 2;
     const double beta             = iw_mesh.domain().beta;
-    const int n_iw                 = iw_mesh.size() / 2;
-    const int n_iW                 = iW_mesh.size() / 2;
 
-    auto r0_mesh                   = make_adjoint_mesh(k_mesh);
-    auto r1_mesh                   = make_adjoint_mesh(q_mesh);
-    auto tau_fermion_mesh          = make_adjoint_mesh(std::get<1>(G.mesh()), 4 * n_iw + 1);
-    auto tau_boson_mesh            = make_adjoint_mesh(std::get<1>(W[0].mesh()), 4 * n_iw + 1);   
+    auto r0_mesh                  = make_adjoint_mesh(k_mesh);
+    auto r1_mesh                  = make_adjoint_mesh(q_mesh);
+    auto tau_fermion_mesh         = make_adjoint_mesh(iw_mesh, 4 * n_iw + 1);
+    auto tau_boson_mesh           = make_adjoint_mesh(iW_mesh, 4 * n_iW + 1);   
  
     auto G_r_tau  = make_gf_from_fourier<0, 1>(G, r0_mesh, tau_fermion_mesh);
     auto chi_r_tau = make_gf_from_fourier<0, 1>(chi, r1_mesh, tau_boson_mesh);
 
     auto chi_minus_r_minus_tau = chi_r_tau;
-    chi_minus_r_minus_tau[eta_][r_, tau_] << chi_r_tau(-r_, beta - tau_);
+    chi_minus_r_minus_tau[r_, tau_] << chi_r_tau(-r_, beta - tau_);
 
     return coupling * make_gf_from_fourier<0, 1>(g_r_tau_t{G_r_tau * chi_minus_r_minus_tau}, k_mesh, iw_mesh);
   }
