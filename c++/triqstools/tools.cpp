@@ -526,13 +526,12 @@ namespace triqstools {
     auto const &[q_mesh, iW_mesh] = chi.mesh();
     
     const int n_iw                = iw_mesh.size() / 2;
-    const int n_iW                = iW_mesh.size() / 2;
     const double beta             = iw_mesh.domain().beta;
 
     auto r0_mesh                  = make_adjoint_mesh(k_mesh);
     auto r1_mesh                  = make_adjoint_mesh(q_mesh);
     auto tau_fermion_mesh         = make_adjoint_mesh(iw_mesh, 4 * n_iw + 1);
-    auto tau_boson_mesh           = make_adjoint_mesh(iW_mesh, 4 * n_iW + 1);   
+    auto tau_boson_mesh           = make_adjoint_mesh(iW_mesh, 4 * n_iw + 1);   
  
     auto G_r_tau  = make_gf_from_fourier<0, 1>(G, r0_mesh, tau_fermion_mesh);
     auto chi_r_tau = make_gf_from_fourier<0, 1>(chi, r1_mesh, tau_boson_mesh);
