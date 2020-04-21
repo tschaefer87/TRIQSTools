@@ -343,8 +343,6 @@ g_k_iw_t self_energy_chi_restricted(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_
 
   g_k_iw_t self_energy_weak_coupling(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
 
-  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling);
-
   g_iW_k_iw_t self_energy_weak_coupling_bosonic_frequency(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);
 
   g_q_k_iw_t self_energy_weak_coupling_bosonic_momentum(g_k_iw_cvt G, q_mesh_t q_mesh, iW_mesh_t iW_mesh, double coupling);

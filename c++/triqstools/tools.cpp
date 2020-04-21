@@ -499,29 +499,8 @@ namespace triqstools {
     Sigma = mpi::all_reduce(Sigma, comm);
     return Sigma;
   }
-  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling) {
-    auto const &k_mesh            = std::get<0>(k_iw_mesh);
-    auto const &iw_mesh           = std::get<1>(k_iw_mesh);
-    auto const &[q_mesh, iW_mesh] = chi.mesh();
-    const double beta             = iw_mesh.domain().beta;
-
-    auto Sigma = g_k_iw_t{{k_iw_mesh}};
-
-    auto comm = mpi::communicator();
-    for (auto k : k_mesh) {
-      if (k.linear_index() % comm.size() == comm.rank()) {
-        for (auto iw : iw_mesh) {
-           for (auto [q, iW] : chi.mesh()) {
-             Sigma[k, iw] += coupling * coupling * G(k + q, iw + iW) * chi(q, iW) / (beta * q_mesh.size());
-           }
-        }
-      }
-    }
-    Sigma = mpi::all_reduce(Sigma, comm);
-    return Sigma;
-  }
-
-  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, double coupling) {
+  
+  g_k_iw_t self_energy_chi(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t mesh, double coupling) {
     auto const &[k_mesh, iw_mesh] = G.mesh();
     auto const &[q_mesh, iW_mesh] = chi.mesh();
     
@@ -539,7 +518,7 @@ namespace triqstools {
     auto chi_minus_r_minus_tau = chi_r_tau;
     chi_minus_r_minus_tau[r_, tau_] << chi_r_tau(-r_, beta - tau_);
 
-    return coupling * make_gf_from_fourier<0, 1>(g_r_tau_t{G_r_tau * chi_minus_r_minus_tau}, k_mesh, iw_mesh);
+    return coupling * make_gf_from_fourier<0, 1>(g_r_tau_t{G_r_tau * chi_minus_r_minus_tau}, std::get<0>(mesh), std::get<1>(mesh));
   }
 
   g_k_iw_t self_energy_chi_restricted(g_k_iw_cvt G, g_q_iW_cvt chi, k_iw_mesh_t k_iw_mesh, double coupling, double xi) {
