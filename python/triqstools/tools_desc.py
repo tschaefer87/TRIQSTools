@@ -41,6 +41,20 @@ module.add_function ("triqstools::chi3_R_iw_t triqstools::make_gf_from_fourier_k
 
 module.add_function ("triqstools::chi3_Q_iw_t triqstools::make_gf_from_fourier_r (triqstools::chi3_R_iw_cvt G)", doc = r"""""")
 
+module.add_function ("double triqstools::fermi (double eps, double beta)", doc = r"""""")
+
+module.add_function ("double triqstools::bose (double eps, double beta)", doc = r"""""")
+
+module.add_function ("double triqstools::eps_2d_square (double kx, double ky)", doc = r"""""")
+
+module.add_function ("double triqstools::lorentzian (double eps, double gamma)", doc = r"""""")
+
+module.add_function ("double triqstools::kinetic_energy (triqstools::g_k_iw_cvt G, triqstools::g_k_cvt eps)", doc = r"""""")
+
+module.add_function ("triqstools::g_k_w_t triqstools::make_sigma_from_lindhard (double beta, triqstools::k_w_mesh_t k_w_mesh, triqstools::g_k_w_t chi, double gamma)", doc = r"""""")
+
+module.add_function ("triqstools::g_k_w_t triqstools::make_lindhard (double beta, triqstools::k_w_mesh_t k_w_mesh, std::complex<double> gamma)", doc = r"""""")
+
 module.add_function ("triqstools::g_k_iw_t triqstools::dyson_k_iw (triqstools::g_k_iw_cvt G0, triqstools::g_k_iw_cvt Sigma, double mu = 0.)", doc = r"""Dyson equation for a one-particle lattice Green function
 
  :math:`G({\mathbf k},i\omega)=\frac{1}{i\omega+\mu-\epsilon_{\mathbf k}-\Sigma({\mathbf k},i\omega)}`

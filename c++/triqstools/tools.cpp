@@ -16,6 +16,73 @@ namespace triqstools {
   using triqs::utility::product;
   using triqs::utility::zip;
 
+  double fermi(double eps, double beta) {
+    return 1. / (std::exp(beta * eps) + 1.);
+  }
+  
+  double bose(double eps, double beta) {
+    return 1. / (std::exp(beta * eps) - 1.);
+  }
+
+  double eps_2d_square(double kx, double ky) {
+    return -2. * (std::cos(kx) + std::cos(ky));
+  }
+
+  double lorentzian(double eps, double gamma) {
+    const double pi = std::atan(1.0) * 4.0;
+    
+    return 1. / pi * gamma / (eps * eps + gamma * gamma);
+  }
+
+  double kinetic_energy(g_k_iw_cvt G, g_k_cvt eps) {
+    auto G_eps = g_k_iw_t{G};
+
+    for (auto [k, iw] : G.mesh()) {
+      G_eps[k, iw] = G[k, iw] * eps[k];
+    }
+
+    return real(density(G_eps));
+  }
+
+  g_k_w_t make_lindhard(double beta, k_w_mesh_t k_w_mesh, std::complex<double> gamma) {
+    auto [k_mesh, w_mesh] = k_w_mesh;
+    auto chi              = g_k_w_t{k_w_mesh};
+
+    for (auto [q, W] : k_w_mesh) {
+      for (auto k : std::get<0>(k_w_mesh)) {
+        auto eps_k = eps_2d_square(k[0], k[1]);
+        auto kq = k + q;
+        auto eps_k_q = eps_2d_square(kq[0], kq[1]);
+        chi[q, W] += -(fermi(eps_k_q, beta) - fermi(eps_k, beta)) / (eps_k_q - eps_k + W + gamma);
+      }
+    }
+    chi /= (k_mesh.size() / w_mesh.delta());
+    
+    return chi;
+  }
+
+  g_k_w_t make_sigma_from_lindhard(double beta, k_w_mesh_t k_w_mesh, g_k_w_t chi, double gamma) {
+    const double pi            = std::atan(1.0) * 4.0;
+    const std::complex<double> iunit(0., 1.);
+    auto q_W_mesh              = chi.mesh();
+    auto [q_mesh, W_mesh]      = q_W_mesh;
+   
+    auto Sigma = g_k_w_t{k_w_mesh};
+
+    for (auto [k, w] : k_w_mesh) {
+      for (auto [q, W] : q_W_mesh) {
+        auto kq = k + q;
+        auto eps_kq = eps_2d_square(kq[0], kq[1]);
+
+        Sigma[k, w] += 1. / (8. * pi * pi * pi) * std::imag(chi[q, W]) * (bose(W, beta) + fermi(eps_kq,     beta)) / (w + W - eps_kq);
+        Sigma[k, w] += -iunit / (8. * pi * pi) * std::imag(chi[q, W]) * (bose(W, beta) + fermi(eps_kq, beta)) * lorentzian(w + W - eps_kq, gamma);
+      }
+    }
+    Sigma /= (q_mesh.size() / W_mesh.delta());
+
+    return Sigma;
+  }  
+
   g_k_iw_t dyson_k_iw(g_k_iw_cvt G0, g_k_iw_cvt Sigma, double mu) {
     auto G = g_k_iw_t{G0};
     G[k_, iw_] << 1.0 / (1.0 / G0[k_, iw_] + mu - Sigma[k_, iw_]);
@@ -201,8 +268,6 @@ namespace triqstools {
   }
 
   g_iW_iw_iw_mat_t make_chi_from_G2c(g_iW_iw_iw_mat_cvt G2c, g_iw_mat_cvt G) {
-    double beta = G.domain().beta;
-
     auto chi = g_iW_iw_iw_mat_t{G2c};
 
     // Calculate generalized susceptibility in the ph channel from G2c and G
@@ -299,6 +364,8 @@ namespace triqstools {
 
     return G;
   }
+  
+  
 
   g_iw_t evaluate_gf_on_mesh(g_iw_cvt gf, iw_mesh_t iw_mesh) {
     // assume that meshes have same statistics

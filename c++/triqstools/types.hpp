@@ -27,6 +27,8 @@ namespace triqstools {
   using k_iw_mesh_t = gf_mesh<cartesian_product<brillouin_zone, imfreq>>;
   using q_iW_mesh_t = k_iw_mesh_t;
 
+  using k_w_mesh_t = gf_mesh<cartesian_product<brillouin_zone, refreq>>;
+
   using r_iw_mesh_t = gf_mesh<cartesian_product<cyclic_lattice, imfreq>>;
   using r_iW_mesh_t = r_iw_mesh_t;
 

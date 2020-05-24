@@ -31,6 +31,20 @@ namespace triqstools {
     return map_block_gf(static_cast<g_K_Q_iw_iW_t (*)(g_R_R_iw_iW_cvt)>(&make_gf_from_fourier_r), G);
   }
 
+  double fermi(double eps, double beta);
+
+  double bose(double eps, double beta);
+
+  double eps_2d_square(double kx, double ky);
+
+  double lorentzian(double eps, double gamma);
+
+  double kinetic_energy(g_k_iw_cvt G, g_k_cvt eps);
+
+  g_k_w_t make_sigma_from_lindhard(double beta, k_w_mesh_t k_w_mesh, g_k_w_t chi, double gamma); 
+
+  g_k_w_t make_lindhard(double beta, k_w_mesh_t k_w_mesh, std::complex<double> gamma);
+
   /**
    * Dyson equation for a one-particle lattice Green function
    *
